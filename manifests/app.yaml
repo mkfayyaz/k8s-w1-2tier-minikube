@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 2                     # two replicas — see load-balancing across them
+  selector:
+    matchLabels: { app: web }
+  template:
+    metadata:
+      labels: { app: web, tier: frontend }
+      annotations:
+        owner: "kashif_minikube"        # example annotation (metadata for humans/tools)
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: web
+          image: hashicorp/http-echo   # tiny demo server; replace with your app in Week 2
+          args: ["-text=Shop frontend OK — DB host resolves via service name 'db'"]
+          ports: [{ containerPort: 5678 }]
+          env:
+            - name: DB_HOST
+              value: "db"          # service discovery: just the service name
+            - name: DB_NAME
+              valueFrom: { configMapKeyRef: { name: db-config, key: POSTGRES_DB } }
+            - name: DB_PASSWORD
+              valueFrom: { secretKeyRef: { name: db-secret, key: POSTGRES_PASSWORD } }
+          resources:
+            requests: { cpu: "50m", memory: "64Mi" }
+            limits:   { cpu: "250m", memory: "128Mi" }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: NodePort                  # exposed outside the cluster for local testing
+  selector: { app: web }
+  ports: [{ port: 80, targetPort: 5678 }]
