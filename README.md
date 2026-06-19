@@ -1,21 +1,21 @@
 # k8s-w1-2tier-minikube
-<<<<<<< HEAD
-k8s-w1-2tier-minikube
-=======
 
-Two-tier Kubernetes demo app running on Minikube.
+Two-tier Kubernetes demo on Minikube with a web frontend and Postgres database.
 
-## Components
+## What This Deploys
 
-- `web` Deployment with 2 replicas
-- `web` NodePort Service
-- `db` Postgres Deployment
-- `db` ClusterIP Service
-- `db-config` ConfigMap
-- `db-secret` Secret
+- Namespace: `shop`
+- ConfigMap: `db-config`
+- Secret: `db-secret`
+- Deployment: `db`
+- Service: `db`
+- Deployment: `web`
+- Service: `web`
 
-## Run
+## Setup
 
 ```bash
 ./scripts/setup.sh shop
+
+Two-tier Kubernetes demo app running on Minikube.
 >>>>>>> 229df8f (week1 two-tier minikube manifests)
